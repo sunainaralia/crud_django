@@ -9,3 +9,4 @@ class User(models.Model):
     phone_no = models.IntegerField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
+    registration = models.DateField(auto_now=True)
