@@ -1,6 +1,6 @@
-from .models import User
+from .models import User,UserCopy
 from rest_framework.views import APIView
-from .serializers import UserSerializer
+from .serializers import UserSerializer,UserCopySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
@@ -68,6 +68,76 @@ class AddAndChangeUser(APIView):
         try:
             data = User.objects.get(pk=pk)
         except User.DoesNotExist:
+            raise Http404
+        data.delete()
+        return Response(
+            {"success": True, "msg": "User is deleted successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+    # user copy
+class UserCopyView(APIView):
+    def post(self, request, format=None):
+        serializer = UserCopySerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {
+                    "success": True,
+                    "msg": "User data is posted successfully",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+
+    def get(self, request, pk=None, format=None):
+        if pk is None:
+            data = UserCopy.objects.all()
+            serializer = UserCopySerializer(data, many=True)
+            return Response(
+                {
+                    "success": True,
+                    "msg": "All user data is retrieved successfully",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            try:
+                data = UserCopy.objects.get(pk=pk)
+            except UserCopy.DoesNotExist:
+                raise Http404
+            serializer = UserCopySerializer(data)
+            return Response(
+                {
+                    "success": True,
+                    "msg": "User is retrieved successfully",
+                    "data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+    def patch(self, request, pk, format=None):
+        try:
+            data = UserCopy.objects.get(pk=pk)
+        except UserCopy.DoesNotExist:
+            raise Http404
+        serializer = UserCopySerializer(data, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {
+                    "success": True,
+                    "data": serializer.data,
+                    "msg": "User information is changed successfully",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+    def delete(self, request, pk, format=None):
+        try:
+            data = UserCopy.objects.get(pk=pk)
+        except UserCopy.DoesNotExist:
             raise Http404
         data.delete()
         return Response(

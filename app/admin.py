@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User
+from .models import User,UserCopy
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -16,3 +16,17 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+class UserCopyAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "user_name",
+        "status",
+        "email",
+        "phone_no",
+        "profile_img",
+        "address",
+        "date",
+    ]
+
+
+admin.site.register(UserCopy, UserCopyAdmin)
